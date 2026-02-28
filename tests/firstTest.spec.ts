@@ -101,4 +101,18 @@ test.describe('Types of locators of available in playwright', () => {
         await page.locator(':text-is("Using the Grid")').locator('..').getByRole('textbox', {name: 'Email'}).click()
     })
 
+
+    test('Reusing Locators', async ({page}) => {
+
+        const basicURL = page.locator('nb-card', {hasText: 'Using the Grid'})
+        const emailField = basicURL.getByRole('textbox', {name: 'Email'})
+        const passwordField = basicURL.getByRole('textbox', {name : 'Password'})
+        const signInButton = basicURL.getByRole('button', {name: 'SIGN IN'})
+
+        await emailField.fill('juan.jose@hotmila.es')
+        await passwordField.fill('paswwrod')
+        await signInButton.click()
+
+        await expect(emailField).toHaveValue('juan.jose@hotmila.es')
+    })
 })
