@@ -71,6 +71,34 @@ test.describe('Types of locators of available in playwright', () => {
         //By exact text match
         await page.locator(':text-is("Using the Grid")').click()
     })
+
+    test('Locating child elements', async ({page}) => {
+
+        //locating by class name
+        await page.locator('nb-card nb-radio :text-is("Option 2")').click()
+        await page.locator('nb-card').locator('nb-radio').locator(':text-is("Option 2")').click()
+
+        //sign button
+        //await page.locator('nb-card form-group :text-is("Sign in")').click()
+        await page.locator('nb-card').getByRole('button', {name: "Sign in"}).first().click()
+    })
     
+
+    test('Locating parents elements', async ({page}) => {
+
+        //Six forms to found elements with playwright
+
+        await page.locator('nb-card', {hasText: 'Using the Grid'}).getByRole('textbox', {name: 'Email'}).fill('jjem@mm.com')
+
+        await page.locator('nb-card', {has: page.locator('#inputEmail1')}).getByRole('textbox', {name: 'Email'}).click()
+
+        await page.locator('nb-card').filter({hasText: 'Using the Grid'}).getByRole('textbox', {name: 'Email'}).click()
+
+        await page.locator('nb-card').filter({has: page.locator('.status-danger')}).getByRole('textbox', {name: 'Email'}).click()
+
+        await page.locator('nb-card').filter({has: page.locator('nb-checkbox')}).filter({hasText: 'Sign in'}).click()
+
+        await page.locator(':text-is("Using the Grid")').locator('..').getByRole('textbox', {name: 'Email'}).click()
+    })
 
 })
