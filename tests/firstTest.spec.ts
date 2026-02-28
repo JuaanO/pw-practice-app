@@ -1,4 +1,5 @@
 import test, { expect } from "@playwright/test";
+import { asyncScheduler } from "rxjs";
 import { first } from "rxjs-compat/operator/first";
 
 
@@ -114,5 +115,50 @@ test.describe('Types of locators of available in playwright', () => {
         await signInButton.click()
 
         await expect(emailField).toHaveValue('juan.jose@hotmila.es')
+    })
+
+
+    test('Extracting values from elements', async ({page}) =>{
+
+        //using a text value
+        const basicForm = page.locator('nb-card').filter({hasText: 'Basic form'})
+        const basicButton = await basicForm.locator('button').textContent()
+        expect(basicButton).toEqual('Submit')
+
+        //using all text values
+        const allRadioButtons = await page.locator('nb-radio').allTextContents()
+        expect(allRadioButtons).toContain('Option 1')
+
+        //using input value
+        const emailField = basicForm.getByRole('textbox', {name: 'Email'})
+        await emailField.fill('test@test.com')
+        const emailValues = await emailField.inputValue()
+        expect(emailValues).toEqual('test@test.com')
+
+        const placeholderValue = await emailField.getAttribute('placeholder')
+        expect(placeholderValue).toEqual('Email')
+
+    })
+
+    test('Assertions', async ({page}) => {
+
+        //General assertions
+        const value = 5
+        expect(value).toEqual(5)
+
+        const basicForm = page.locator('nb-card').filter({hasText: 'Basic form'})
+        const basicButton = await basicForm.locator('button').textContent()
+        expect(basicButton).toEqual('Submit')
+
+        const baseButtonSubmit = page.locator('nb-card').filter({hasText: 'Basic form'})
+        const buttonSubmit = await baseButtonSubmit.locator('button')
+
+        //Locator assertions
+        await expect(buttonSubmit).toHaveText('Submit')
+
+        //Soft assertions
+        await expect.soft(buttonSubmit).toHaveText('Submit1')
+        await baseButtonSubmit.locator('button').click()
+
     })
 })
