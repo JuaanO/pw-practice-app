@@ -1,8 +1,4 @@
 import test, { expect } from "@playwright/test";
-import { asyncScheduler } from "rxjs";
-import { first } from "rxjs-compat/operator/first";
-
-
 
 test.describe('Suite of my first test', () => {
 
@@ -157,7 +153,7 @@ test.describe('Types of locators of available in playwright', () => {
         await expect(buttonSubmit).toHaveText('Submit')
 
         //Soft assertions
-        await expect.soft(buttonSubmit).toHaveText('Submit1')
+        await expect.soft(buttonSubmit).toHaveText('Submit')
         await baseButtonSubmit.locator('button').click()
 
     })

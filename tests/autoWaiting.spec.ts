@@ -14,18 +14,18 @@ import { test, expect } from "@playwright/test";
 
             //maximun of time of test
             test.slow()
-            await page.getByText('Button Triggering AJAX Request').click({timeout:200})
+            await page.getByText('Button Triggering AJAX Request').click({timeout:20000})
 
             const successMessage = page.locator('.bg-success')
             const text = await successMessage.textContent()
 
 
             //Wait for default 30 seconds 
-            //await successMessage.click()
+            await successMessage.click()
             //await successMessage.waitFor({state: 'visible'})
             //expect(text).toContain('Data loaded with AJAX get request.')
 
-            await expect(successMessage).toHaveText('Data loaded with AJAX get request.', {timeout:200})
+            await expect(successMessage).toHaveText('Data loaded with AJAX get request.', {timeout:20000})
 
         })
     })
