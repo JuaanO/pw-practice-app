@@ -1,5 +1,4 @@
 import { test, expect } from "@playwright/test";
-import { using } from "rxjs";
 
 test.beforeEach(async ({page}) => {
     await page.goto('http://localhost:4200/')
@@ -46,8 +45,6 @@ test.describe('Form layouts page', () => {
         await expect(await usingTheGrid.getByRole('radio', {name: 'Option 1'}).isChecked()).toBeFalsy()
         await expect(await usingTheGrid.getByRole('radio', {name: 'Option 2'}).isChecked()).toBeTruthy()
 
-
-
     })
 })
 
@@ -68,6 +65,116 @@ test.describe('Form Modal & Overlays page', () => {
 
         //await page.getByRole('checkbox', {name: 'SHOW TOAST'}).click
 
+        const allCheckBoxes = page.getByRole('checkbox')
+
+        for (const box of await allCheckBoxes.all()) {
+            await box.uncheck({force: true})
+            expect(await box.isChecked()).toBeFalsy()
+        }
+
+        for (const box of await allCheckBoxes.all()) {
+            await box.check({force: true})
+            expect(await box.isChecked()).toBeTruthy()
+        }
+
     })
+
+
+    test('lists ', async ({page}) => {
+
+        const menuButton = page.locator('ngx-header nb-select')
+        await menuButton.click()
+
+        const optionList = page.locator('nb-option-list nb-option')
+        await expect(optionList).toHaveText(["Light", "Dark", "Cosmic","Corporate"])
+        
+        await optionList.filter({hasText: 'Cosmic'}).click()
+
+        const headerColor = await page.locator('nb-layout-header')
+        await expect(headerColor).toHaveCSS('background-color', 'rgb(50, 50, 89)')
+
+        // const button = page.getByRole('button', { name: /Light/i })
+        // await button.click()
+        // const buttonDark = page.getByText('Dark')
+        // await buttonDark.click()
+        // await buttonDark.click()
+        // const buttonCosmic = page.getByText('Cosmic')
+        // await buttonCosmic.click()
+
+        await menuButton.click()
+
+        const colors = {
+            "Light": "rgb(255, 255, 255)",
+            "Dark": "rgb(34, 43, 69)",
+            "Cosmic": "rgb(50, 50, 89)",
+            "Corporate": "rgb(255, 255, 255)"
+        }
+
+        for (const color in colors){
+            await optionList.filter({hasText: color}).click()
+            await expect(headerColor).toHaveCSS('background-color',colors[color])
+            if (color != "Corporate") {
+                await menuButton.click()
+            }
+        }
+    })
+
+
+})
+
+
+test.describe('Tooltips and Dialogs', () => {
+    
+test.beforeEach(async ({page}) => {
+await page.getByRole('link', {name: 'Modal & Overlays'}).click();
+await page.getByRole('link', {name: 'Tooltip'}).click();
+})
+
+    test('Tooltips', async ({page}) =>{
+
+
+        const tooltipCard = page.locator('nb-card', {hasText: 'Colored Tooltips'})
+        await tooltipCard.getByRole('button', {name: 'Warning'}).hover()
+
+        const tooltipMessage = await page.locator('nb-tooltip').textContent()
+        expect(tooltipMessage).toEqual('This is a tooltip')
+        
+    })
+
+
+
+})
+
+
+test.describe('Dialogs', () => {
+    
+    test.beforeEach(async ({page}) => {
+    await page.getByRole('link', {name: 'Tables & Data'}).click();
+    await page.getByRole('link', {name: 'Smart Table'}).click();
+    })
+
+    test('Dialoags for browser', async ({page}) => {
+
+
+        page.on('dialog', dialog => {
+            expect(dialog.message()).toEqual('Are you sure you want to delete?')
+            dialog.accept();
+        })
+        
+        const titleModule = (await page.locator('nb-card-header', {hasText: 'Smart Table'}).textContent()).toLowerCase()
+        await expect(titleModule).toContain('table')
+
+
+        const allButtonsDelete = page.locator('.nb-trash')
+        await allButtonsDelete.first().click()
+        //await allButtonsDelete.locator()
+
+
+        const firstButton = page.getByRole('table').locator('tr', {hasText: 'fat@yandex.ru'}).locator('.nb-trash')
+
+        await firstButton.click()
+    })
+
+
 
 })
