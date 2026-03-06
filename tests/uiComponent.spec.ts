@@ -175,6 +175,81 @@ test.describe('Dialogs', () => {
         await firstButton.click()
     })
 
+    test('Edit a record of table', async ({page}) => {
+
+        const recordToEdit = await page.getByRole('table').locator('tr', {hasText: 'barbara@yandex.ru' }).locator('.nb-edit')
+
+        await recordToEdit.click()
+    
+        const nuevoCampo = page.locator('input-editor').getByPlaceholder('E-mail')
+
+        await nuevoCampo.clear()
+
+        const fieldToEdit1 = page.locator('input-editor').getByPlaceholder('E-mail')
+
+        await fieldToEdit1.fill('juan.jose@gmail.com')
+
+        const saveAcction = await page.locator('.nb-checkmark')
+
+        await saveAcction.click()
+
+        await page.locator('.ng2-smart-page-link').getByText('2').click()
+
+        const targetRowByID = page.getByRole('row', {name: '11'}).filter({has: page.locator('td').nth(1).getByText('11')})
+
+        await targetRowByID.locator('.nb-edit').click() 
+
+        await nuevoCampo.clear()
+        
+        await fieldToEdit1.fill('juan.jose@gmail.com')
+
+        await saveAcction.click()
+
+        await expect(targetRowByID.locator('td').nth(5)).toContainText('jose')
+
+        await expect(targetRowByID.locator('td').nth(5)).toHaveText('juan.jose@gmail.com')
+
+    })
+
+    test('Filter fields and verify', async ({page}) => {
+
+        const ages = [ "20", "40", "200"]
+
+        for ( let age of ages ){
+            await page.getByRole('textbox', { name: 'Age' }).clear()
+            await page.getByRole('textbox', { name: 'Age' }).fill(age)
+
+            await page.waitForTimeout(500)
+
+            const ageRows = page.locator('tbody tr')
+
+            for ( let row of await ageRows.all()){
+                const cellValue = await row.locator('td').last().textContent()
+                if ( age == '200') {
+                    expect(await page.getByRole('table').textContent()).toContain('No data found')
+                }
+
+            }
+        }
 
 
+    })
+
+    
+
+
+})
+
+test.describe('DataPicker', () => {
+    
+test.beforeEach(async ({page}) => {
+await page.getByRole('link', {name: 'Forms'}).click();
+await page.getByRole('link', {name: 'DatePicker'}).click();
+})
+
+
+    test('Working with datepicker', async ({page}) =>{
+
+        await expect(page.locator('nb-card').getByText('Common Datepicker')).toContainText('Common Datepicker')
+    })
 })
