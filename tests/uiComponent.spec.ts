@@ -306,7 +306,46 @@ await page.getByRole('link', {name: 'DatePicker'}).click();
         await page.locator('[class="day-cell ng-star-inserted"]').getByText(expecteDate, {exact: true}).click()
 
         await expect(calendarInputField).toHaveValue(dateToAssert)
+    })
+})
 
+
+test.describe('Sliders', () => {
+
+    test('Working with Sliders', async ({page}) => {
+
+        //const switchButtonTemperature = page.locator('.power-icon').nth(0)
+        //await switchButtonTemperature.click()
+
+        const tempGaugeWithNode = page.locator('svg > g > circle').first()
+        await tempGaugeWithNode.evaluate( node => {
+
+            node.setAttribute('cx', '232.630')
+            node.setAttribute('cy', '232.630')
+        })
+
+        await tempGaugeWithNode.click()
+
+        await expect(page.locator('[class="value temperature h1"]').first()).toContainText('30')
+
+
+        //Update attributes
+        const tempGauge = await page.locator('.svg-container > svg').first()
+        //await tempGauge.click()
+        await tempGauge.scrollIntoViewIfNeeded()
+
+        const box = await tempGauge.boundingBox()
+        const x = box.x + box.width / 2
+        const y = box.y + box.height / 2
+
+        await page.mouse.move(x, y)
+        await page.mouse.down()
+        await page.mouse.move(x + 100, y)
+        await page.mouse.move(x + 100, 100 + y)
+        await page.mouse.up()
+
+        await expect(page.locator('[class="value temperature h1"]')).toContainText('30')
 
     })
 })
+
