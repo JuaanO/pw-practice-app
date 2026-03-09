@@ -1,6 +1,7 @@
 import { test } from "@playwright/test";
 import { NavigationPage } from "../page-objects/navigationPage";
 import { FormLayoutsPage } from "../page-objects/formLayoutsPage";
+import { DatePickerPage } from "../page-objects/datePickerPage";
 
 test.beforeEach(async({page}) =>{
     await page.goto('http://localhost:4200/')
@@ -33,4 +34,13 @@ test('Parametrized method using inline form', async ({page}) => {
     await navigateTo.formLayoutsPage()
     await formlayoutspage.submitUsingInLineFormWithCredentials('juanito@gmail.es','Juan Jose', false)
 
+})
+
+test('DatePicker', async ({page}) => {
+    
+    const navigateTo = new NavigationPage(page)
+    const datePickerPage = new DatePickerPage(page)
+    
+    await navigateTo.datePickerPage()
+    await datePickerPage.selectCommonDatePickerDateFromToday(40)
 })

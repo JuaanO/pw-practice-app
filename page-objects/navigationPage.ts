@@ -13,7 +13,7 @@ export class NavigationPage {
 
         this.page = page
         this.formLayoutsPageMenuItem = page.getByRole('link', {name: 'Form Layouts'})
-        this.datePickerPageMenuItem = page.getByRole('link', {name: 'DatePicker'})
+        this.datePickerPageMenuItem = page.getByRole('link', {name: 'Datepicker'})
         this.smartTablePageMenuItem = page.getByRole('link', {name: 'Smart Table'})
         this.toastToPageMenuItem = page.getByRole('link', {name: 'Toastr'})
         this.toolTipPageMenuItem = page.getByRole('link', {name: 'Tooltip'})
