@@ -1,7 +1,5 @@
 import { test } from "@playwright/test";
-import { NavigationPage } from "../page-objects/navigationPage";
-import { FormLayoutsPage } from "../page-objects/formLayoutsPage";
-import { DatePickerPage } from "../page-objects/datePickerPage";
+import { PageManager } from "../page-objects/pageManager.spec";
 
 test.beforeEach(async({page}) =>{
     await page.goto('http://localhost:4200/')
@@ -9,38 +7,35 @@ test.beforeEach(async({page}) =>{
 
 test('Navigate to form page', async ({page}) => {
 
-    const navigateTo = new NavigationPage(page)
-    await navigateTo.formLayoutsPage()
-    await navigateTo.datePickerPage()
-    await navigateTo.smartTablePage()
-    await navigateTo.toastToPage()
-    await navigateTo.toolTipPage()
+    const pm = new PageManager(page)
+
+    await pm.navigateTo().formLayoutsPage()
+    await pm.navigateTo().datePickerPage()
+    await pm.navigateTo().smartTablePage()
+    await pm.navigateTo().toastToPage()
+    await pm.navigateTo().toolTipPage()
 })
 
 test('Parametrized method using the grid form', async ({page}) => {
-    
-    const navigateTo = new NavigationPage(page)
-    const formlayoutspage = new FormLayoutsPage(page)
 
-    await navigateTo.formLayoutsPage()
-    await formlayoutspage.submitUsingTheGridFormWithCredentials('juanito@gmail.es','*******', 'Option 1')
+    const pm = new PageManager(page)
+    await pm.navigateTo().formLayoutsPage()
+    await pm.onFormLayoutsPage().submitUsingTheGridFormWithCredentials('juanito@gmail.es','*******', 'Option 1')
 })
 
 test('Parametrized method using inline form', async ({page}) => {
-    
-    const navigateTo = new NavigationPage(page)
-    const formlayoutspage = new FormLayoutsPage(page)
 
-    await navigateTo.formLayoutsPage()
-    await formlayoutspage.submitUsingInLineFormWithCredentials('juanito@gmail.es','Juan Jose', false)
+    const pm = new PageManager(page)
+    await pm.navigateTo().formLayoutsPage()
+    await pm.onFormLayoutsPage().submitUsingInLineFormWithCredentials('juanito@gmail.es','Juan Jose', false)
 
 })
 
 test('DatePicker', async ({page}) => {
     
-    const navigateTo = new NavigationPage(page)
-    const datePickerPage = new DatePickerPage(page)
-    
-    await navigateTo.datePickerPage()
-    await datePickerPage.selectCommonDatePickerDateFromToday(40)
+    const pm = new PageManager(page)
+    await pm.navigateTo().datePickerPage()
+    await pm.onThePickePage().selectCommonDatePickerDateFromToday(10)
+    await pm.onThePickePage().selectDatePickerWithRangeFromToday(2, 6)
 })
+
